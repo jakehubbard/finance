@@ -1,0 +1,3 @@
+#!/bin/bash
+
+python ~/onedrive/code/bin/report.py $@

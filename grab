@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# exit when any command fails
+set -e
+
+Help()
+{
+  # Help Display
+  echo
+  echo "Cleans and formats data from mint and optional CSV sources and then inserts them into the database."
+  echo
+  echo "Syntax: clean {OPTIONS} {CSVs}"
+  echo
+  echo "OPTIONS"
+  echo "-h             Print this Help prompt."
+  echo "-m {month}     Include Mint data with selected month"
+  echo
+  echo "CSVs will be read from /home/jake/onedrive/finances/bank/raw"
+  echo
+}
+
+# Get the options
+while getopts ":hm" option; do
+   case $option in
+      h) # display Help
+          Help
+          exit;;
+      m) # Include Mint API
+          # Removes optional parameter
+          params=( $* )
+          unset params[0]
+          set -- "${params[@]}"
+          python ~/onedrive/code/bin/mint.py $@
+          ;;
+   esac
+   # Removes month parameter from arguments
+   params=( $* )
+   unset params[0]
+   set -- "${params[@]}"
+done
+
+python ~/onedrive/code/bin/clean_income.py $@
+python ~/onedrive/code/bin/clean_spending.py $@
+rm -rf ~/onedrive/finances/bank/raw/mint.csv
