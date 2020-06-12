@@ -1,1 +1,2 @@
-# finance
+# Jake's Finance Project
+
